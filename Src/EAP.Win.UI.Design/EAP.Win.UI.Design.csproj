@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C8E135E1-9F8F-4B85-9118-B30CD7C09382}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EAP.Win.UI.Design</RootNamespace>
+    <AssemblyName>EAP.Win.UI.Design</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ComponentFactory.Krypton.Toolkit, Version=4.4.0.0, Culture=neutral, PublicKeyToken=a87e673e9ecb6e8e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Lib\ComponentFactory.Krypton.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FilterColumnDataPropertyNameEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FilterColumnTypeEditor.cs" />
+    <Compile Include="DesignerUtils.cs" />
+    <Compile Include="FilterAddColumnDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilterColumnCollectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilterColumnCollectionDialog.Designer.cs">
+      <DependentUpon>FilterColumnCollectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FilterColumnCollectionEditor.cs" />
+    <Compile Include="FilterColumnDesigner.cs" />
+    <Compile Include="FilterColumnDesignTimeVisibleAttribute.cs" />
+    <Compile Include="FilterColumnTypePicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FilterControlComponentEditor.cs" />
+    <Compile Include="FilterControlDesigner.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FilterAddColumnDialog.resources">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterColumnCollectionDialog.resources" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\FilterColumnsDialog.selectedColumns.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\FilterColumnsDialog.delete.bmp" />
+    <EmbeddedResource Include="Resources\FilterColumnsDialog.moveDown.bmp" />
+    <EmbeddedResource Include="Resources\FilterColumnsDialog.moveUp.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AddNewDataSource.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\DataPickerImages.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EAP.Win.UI\EAP.Win.UI.csproj">
+      <Project>{9D1538ED-7AAF-43EB-8887-273F526CC003}</Project>
+      <Name>EAP.Win.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EAP\EAP.csproj">
+      <Project>{DD9E027C-4212-4F7C-B1DC-AD94212F958B}</Project>
+      <Name>EAP</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

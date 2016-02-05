@@ -1,0 +1,409 @@
+﻿@using EAP;
+@using EAP.ModelFirst.Core.Project;
+@using EAP.ModelFirst.Core.Project.Entities;
+@using EAP.ModelFirst.Core.Project.Members;
+@using EAP.ModelFirst.Core.Project.Parameters;
+@using EAP.ModelFirst.Core.Project.Relationships;
+@functions{
+	//NameSpace
+	public static string getNamespaceBegin(TypeBase m){
+		if(m.IsNested)
+			return "";
+		var package = m.GetPackageName();
+		if(package.IsNullOrEmpty())
+			return "";
+		return "namespace "+package+"\r\n{\r\n";
+	}	
+	public static string getNamespaceEnd(TypeBase m){
+		if(m.IsNested)
+			return "";
+		var package = m.GetPackageName();
+		if(package.IsNullOrEmpty())
+			return "";
+		return "}";
+	}
+	//BaseType
+	public static string getClassComment(TypeBase t){
+		return "	/// <summary>\r\n	/// "+t.Comments+"\r\n	/// </summary>\r\n";
+	}
+	public static string getClassAttribute(TypeBase m){
+		if(m.EntityType == EntityType.Class) 
+			return "	[RootEntity, Serializable]\r\n	//[ConditionQueryType(typeof("+getTypeName(m)+"Criteria))]\r\n";
+		return "";
+	}	
+	public static string getAccess(AccessModifier t){
+		if(t == AccessModifier.Public)
+			return "public ";
+		else if(t == AccessModifier.Private)
+			return "private ";
+		else if(t == AccessModifier.Internal)
+		    return "internal ";
+		else if(t == AccessModifier.Protected)
+		    return "protected ";
+		else if(t == AccessModifier.ProtectedInternal)
+		    return "protected internal ";
+		return "";
+	}	
+	public static string getPartial(TypeBase m){
+		if(m.EntityType == EntityType.Class) 
+			return "partial ";
+		return "";
+	}	
+	public static string getClassModifier(TypeBase t){
+		if (t is ClassType){
+			var type = t as ClassType;
+			if((type.Modifier & ClassModifier.Static) == ClassModifier.Static)
+				return "static ";
+			if((type.Modifier & ClassModifier.Abstract) == ClassModifier.Abstract)
+				return "abstract ";
+			if((type.Modifier & ClassModifier.Static) == ClassModifier.Static)
+				return "sealed ";
+		}
+		return "";
+	}	
+	public static string getEntryType(TypeBase m){
+		if(m.EntityType == EntityType.Class) 
+			return "class ";
+		else if(m.EntityType == EntityType.Interface)
+			return "interface ";
+		else if(m.EntityType == EntityType.Structure)
+			return "structure ";
+		else if(m.EntityType == EntityType.Enum)
+			return "enum ";
+		else if(m.EntityType == EntityType.Delegate)
+			return "delegate ";
+		return "";
+	}
+	public static string getTypeName(TypeBase m){
+		return m.Name;
+	}	
+	public static string getTypeBase(TypeBase t){
+		var result = "";
+		if (t is ClassType){
+			var type = t as ClassType;
+			if (type.HasExplicitBase)
+				result += type.BaseClass.GetPackageName(trimEnd:false) + type.BaseClass.Name;
+			else{
+				result += "DataEntity<"+getTypeName(t)+">";
+			}
+		}
+		if (t is InterfaceType){
+			var type = t as InterfaceType;
+			if (type.HasExplicitBase)
+				foreach(var i in type.Bases)
+					result += (result.Length>0 ? ", " : "") + i.GetPackageName(trimEnd:false) + i.Name;
+		}
+		if(t is SingleInharitanceType){
+			var type = t as SingleInharitanceType;
+            foreach (var r in type.RealizationRelationships)
+			{
+				var i = r.Second as TypeBase;
+                result += (result.Length>0 ? ", " : "") + i.GetPackageName(trimEnd:false) + i.Name;
+		    }
+		}
+		return result.Length>0 ? " : " + result : "";
+	}
+	//Fields
+	public static string getFieldModifier(Field m){
+		var result = "";
+		if(m.IsStatic)
+			result+="static ";
+		if(m.IsReadonly)
+			result+="readonly ";
+		if(m.IsConstant)
+			result+="constant ";
+		if(m.IsVolatile)
+			result+="volatile ";
+		if(m.IsHider)
+			result+="new ";
+		return result;
+	}	
+	public static string getFieldAttribute(Field m){
+		var result = "\r\n";//"[System.Runtime.Serialization.DataMember]\r\n";
+		if(m.GenerateDbColumn){				
+			if(m.DbSchema.IsPrimaryKey)
+				result += "		[System.ComponentModel.DataAnnotations.Key]\r\n";
+			if(m.DbSchema.NotNull)
+				result += "		[System.ComponentModel.DataAnnotations.Required]\r\n";
+			if(m.Type.ToLower() == "string")
+				result += "		[System.ComponentModel.DataAnnotations.StringLength("+m.DbSchema.Length+")]\r\n";
+		}
+		return result;
+	}
+	public static string getFields(TypeBase t){
+		var fields="";
+		if(t is EnumType){
+			var type = t as EnumType;
+			foreach (var v in type.Values)
+				fields += "		"+v.Name + (v.InitValue.HasValue ? "=" + v.InitValue : "") + ",\r\n";
+		}
+		else if(t is CompositeType){
+			var type = t as CompositeType;
+			foreach(var f in type.Fields){
+				//if(f.DbSchema.IsPrimaryKey) continue;
+				if(f.Setter || f.Getter){
+					var field = "		"+getFieldModifier(f)+f.Type+" m_"+f.Name+(f.InitialValue.IsNullOrEmpty()?"":" = "+f.InitialValue)+";\r\n";
+					var property = "		"+getAccess(f.Access)+"virtual "+f.Type+" "+f.Name+"\r\n";
+					var propertyBody="		{\r\n";
+					if(f.Getter){
+						propertyBody+="			get{ return "+f.Name+"; }\r\n";
+					}
+					if(f.Setter){
+						propertyBody+="			set{ "+f.Name+" = value; }\r\n";
+					}
+					propertyBody+="		}\r\n\r\n";
+					fields += field;
+					if(f.Comments.IsNotEmpty())
+						fields += "		/// <summary>\r\n		/// "+f.Comments+"\r\n		/// </summary>\r\n";
+					fields += "		"+getFieldAttribute(f)+property+propertyBody;
+				}
+				else{
+					var field = "		"+getAccess(f.Access)+getFieldModifier(f)+f.Type+" "+f.Name+(f.InitialValue.IsNullOrEmpty()?"":" = "+f.InitialValue)+";\r\n\r\n";
+					if(f.Comments.IsNotEmpty())
+						fields += "		/// <summary>\r\n		/// "+f.Comments+"\r\n		/// </summary>\r\n";
+					fields += field;
+				}
+			}
+		}
+		return fields.TrimEnd('\r','\n');
+	}
+	//Operations	
+	public static string getOperationModifier(Operation m){
+		var result = "";
+		if(m.IsStatic)
+			result+="static ";
+		if(m.IsVirtual)
+			result+="virtual ";
+		if(m.IsAbstract)
+			result+="abstract ";
+		if(m.IsOverride)
+			result+="override ";
+		if(m.IsSealed)
+			result+="sealed ";
+		if(m.IsHider)
+			result+="new ";
+		if(m is Event)
+			result += "event ";
+		return result;
+	}	
+	public static string getOperationType(Operation m){
+		if(m.Type.IsNullOrEmpty())
+			return "";
+		return m.Type+" ";
+	}	
+	public static string getOperationName(Operation m){
+		return m.Name;
+	}	
+	public static string getOperationParameters(Operation m){
+		if(m is Event)
+			return "";
+		var result = "(";
+		foreach(var p in m.Parameters){
+			if(result.Length>1)
+				result+=", ";
+			if(p.Modifier == ParameterModifier.Inout)
+				result+="ref ";
+			if(p.Modifier == ParameterModifier.Out)
+				result+="out ";
+			if(p.Modifier == ParameterModifier.Params)
+				result+="params ";
+			result+=p.Type+" "+p.Name;
+			if(!p.DefaultValue.IsNullOrEmpty())
+				result+="="+p.DefaultValue;
+		}
+		result += ")";
+		return result;
+	}
+	public static string getPropertyAttribute(Operation m){
+		var result = "";
+		return result;
+	}
+	public static string getComments(Operation o){
+		return "		/// <summary>\r\n		/// "+o.Comments+"\r\n		/// </summary>\r\n";
+	}
+	public static string getOperations(TypeBase t){
+		var operations="";
+		if(t is CompositeType){
+			var type = t as CompositeType;
+			foreach(var o in type.Operations){
+				var operation = "";
+				if(o is Property){
+					var p = o as Property;
+					operation+="		#region "+getOperationName(o)+"\r\n\r\n";
+					operation+= getComments(o);
+					operation+="		public static readonly Property<"+o.Type+"> "+getOperationName(o)+"Property = P<"+getTypeName(t)+">.Register(e => e."+getOperationName(o)+");\r\n";
+					operation+= getComments(o);					
+					operation+="		"+getPropertyAttribute(o)+getAccess(o.Access)+getOperationModifier(o)+getOperationType(o)+getOperationName(o)+"\r\n		{\r\n";
+					if(!p.IsWriteonly)
+						operation+="			"+getAccess(p.ReadAccess)+"get { return GetProperty("+getOperationName(o)+"Property); }\r\n";
+					if(!p.IsReadonly)
+						operation+="			"+getAccess(p.WriteAccess)+"set { SetProperty("+getOperationName(o)+"Property, value); }\r\n";
+					operation+="		}\r\n\r\n		#endregion\r\n\r\n";
+				}
+				else{
+					operation+= getComments(o);
+					var opName = o is Constructor ? getTypeName(t) : getOperationName(o);
+					operation+="		"+getAccess(o.Access)+getOperationModifier(o)+getOperationType(o)+opName+getOperationParameters(o);
+					if(o.HasBody)
+						operation+="\r\n		{\r\n			throw new NotImplementedException();\r\n		}\r\n\r\n";
+					else
+						operation+=";\r\n\r\n";
+				}
+				operations+=operation;
+			}
+			
+			operations+=getAssociation(type);
+		}
+		return operations.TrimEnd('\r','\n');
+	}
+	
+	public static string getAssociation(CompositeType type){
+		var result = "";
+		foreach (var r in type.AssociationRelationships){			
+			if(r.Second is CompositeType){
+				var refType = r.Second as CompositeType;
+				if (r.EndMultiplicity.Contains('*'))
+					result+=getRefEntityList(type, refType, r.StartRole);
+				else
+					result+=getRefEntity(type, refType, r.StartRole, r.Label);
+			}
+			else if(r.Second is EnumType){
+				var refType = r.Second as EnumType;
+				var name = r.StartRole;
+				if(name.IsNullOrEmpty())
+					name=getTypeName(refType);
+				result+="		#region "+name+"\r\n\r\n";
+				result+=getComments(r.Label);
+				result+="		public static readonly Property<"+getTypeName(refType)+"> "+name+"Property = P<"+getTypeName(type)+">.Register(e => e."+name+");\r\n";
+				result+=getComments(r.Label);
+				result+="		public "+getTypeName(refType)+" "+name+"\r\n		{\r\n			get { return GetProperty("+name+"Property); }\r\n			set { SetProperty("+name+"Property, value); }\r\n		}\r\n\r\n";
+				result+="		#endregion\r\n\r\n";
+			}
+		}
+		
+		foreach (var a in type.Associations){
+			foreach (var r in a.AssociationRelationships){
+				if(r.Second == type && r.Direction == Direction.Bidirectional){
+					if(r.First is CompositeType){
+						var refType = r.First as TypeBase;
+						if (r.StartMultiplicity.Contains('*'))
+							result+=getRefEntityList(type, refType, r.EndRole);
+						else
+							result+=getRefEntity(type, refType, r.EndRole, r.Label);
+					}
+				}
+			}
+		}
+		return result;
+	}
+	
+	public static string getComments(string comments){
+		return "		/// <summary>\r\n		/// "+comments+"\r\n		/// </summary>\r\n";
+	}
+	
+	public static string getRefEntity(CompositeType type, TypeBase refType, string name, string comments){
+		if(name.IsNullOrEmpty())
+			name = getTypeName(refType);
+		var result="		#region "+name+"\r\n\r\n";
+		result+=getComments(comments+"Id");
+		result+="		public static readonly IRefIdProperty "+name+"IdProperty = P<"+getTypeName(type)+">.RegisterRefId(e => e."+name+"Id, ReferenceType.Normal);\r\n";
+		result+=getComments(comments+"Id");
+		result+="		public int? "+name+"Id\r\n		{\r\n			get { return (int?)GetRefNullableId("+name+"IdProperty); }\r\n			set { SetRefNullableId("+name+"IdProperty, value); }\r\n		}\r\n\r\n";
+		result+=getComments(comments);
+		result+="		public static readonly RefEntityProperty<"+getTypeName(refType)+"> "+name+"Property = P<"+getTypeName(type)+">.RegisterRef(e => e."+name+", "+name+"IdProperty);\r\n";
+		result+=getComments(comments);
+		result+="		public "+getTypeName(refType)+" "+name+"\r\n		{\r\n			get { return GetRefEntity("+name+"Property); }\r\n			set { SetRefEntity("+name+"Property, value); }\r\n		}\r\n\r\n";
+		result+="		#endregion\r\n\r\n";
+		return result;
+	}
+	
+	public static string getRefEntityList(CompositeType type, TypeBase refType, string name){
+		if(name.IsNullOrEmpty())
+			name = getTypeName(refType)+"List";
+		var result="		#region "+name+"\r\n\r\n";
+		result+="		public static readonly ListProperty<"+getTypeName(refType)+"List> "+name+"Property = P<"+getTypeName(type)+">.RegisterList(e => e."+name+");\r\n";
+		result+="		public "+getTypeName(refType)+"List "+name+"\r\n		{\r\n			get { return this.GetLazyList("+name+"Property); }\r\n		}\r\n\r\n";
+		result+="		#endregion\r\n\r\n";
+		return result;		
+	}
+	
+	public static string getConstructor(TypeBase t){
+		if(t is ClassType)
+			return "		#region 构造函数\r\n\r\n		public "+getTypeName(t)+"() { }\r\n\r\n		[SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]\r\n		protected "+getTypeName(t)+"(SerializationInfo info, StreamingContext context) : base(info, context) { }\r\n\r\n		#endregion\r\n\r\n";
+		return "";
+	}
+	
+	public static string getEntityList(TypeBase t){
+		if(t is ClassType){
+			var type = t as ClassType;
+			if((type.Modifier & ClassModifier.Abstract) != ClassModifier.Abstract){
+				var result = "\r\n\r\n";
+				result+="	/// <summary>\r\n	/// "+t.Comments+" 列表\r\n	/// </summary>\r\n";;
+				result+="	[Serializable]\r\n	public partial class "+getTypeName(t)+"List : EntityList<"+getTypeName(t)+"> { } ";
+				return result;
+			}
+		}
+		return "";
+	}
+	
+	public static string getRepository(TypeBase t){
+		if(t is ClassType){
+			var type = t as ClassType;
+			if((type.Modifier & ClassModifier.Abstract) != ClassModifier.Abstract){
+				var result = "\r\n\r\n";
+				result+="	/// <summary>\r\n	/// "+t.Comments+" 仓库\r\n	/// </summary>\r\n";;
+				result+="	public partial class "+getTypeName(t)+"Repository : "+t.GetPackageName(".", false).Split('.')[0]+"EntityRepository<"+getTypeName(t)+"Repository, "+getTypeName(t)+">\r\n	{\r\n	} ";
+				return result;
+			}
+		}
+		return "";
+	}
+	
+	public static string getEntityConfig(TypeBase t){
+		if(t is ClassType){
+			var type = t as ClassType;
+			if((type.Modifier & ClassModifier.Abstract) != ClassModifier.Abstract){
+				var result = "\r\n\r\n";
+				result+="	/// <summary>\r\n	/// "+t.Comments+" 实体配置\r\n	/// </summary>\r\n";;
+				result+="	internal class "+getTypeName(t)+"Config : EntityConfig<"+getTypeName(t)+">\r\n	{\r\n		protected override void AddValidations(IValidationDeclarer rules)\r\n		{\r\n		}\r\n\r\n		protected override void ConfigMeta()\r\n		{\r\n			Meta.MapTable().MapAllProperties();\r\n			Meta.EnablePhantoms();\r\n		}\r\n	}";
+				return result;
+			}
+		}
+		return "";
+	}
+}@{
+	var output="\\"+Model.ProjectName+"\\"+Model.Type.GetPackageName("\\", false)+Model.Type.Name+".cs";
+}
+using Common;
+using Platform;
+using Platform.Domain;
+using Platform.Domain.Validation;
+using Platform.ManagedProperty;
+using Platform.MetaModel;
+using Platform.MetaModel.Attributes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
+
+@getNamespaceBegin(Model.Type)@getClassComment(Model.Type)@getClassAttribute(Model.Type)	@getAccess(Model.Type.Access)@getClassModifier(Model.Type)@getPartial(Model.Type)@getEntryType(Model.Type)@getTypeName(Model.Type)@getTypeBase(Model.Type)
+	{
+@{
+		@getConstructor(Model.Type);
+		var newLine = "\r\n";
+		var fields = getFields(Model.Type); 
+		var operations = getOperations(Model.Type);
+		if(!string.IsNullOrWhiteSpace(fields)){
+			@fields
+			@newLine
+		}
+		if(!string.IsNullOrWhiteSpace(operations)){
+			if(!string.IsNullOrWhiteSpace(fields))
+				@newLine
+			@operations
+			@newLine
+		}
+}
+	}@getEntityList(Model.Type)@getRepository(Model.Type)@getEntityConfig(Model.Type)
+@getNamespaceEnd(Model.Type)

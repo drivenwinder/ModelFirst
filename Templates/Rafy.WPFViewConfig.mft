@@ -1,0 +1,104 @@
+﻿@using EAP;
+@using EAP.ModelFirst.Core.Project;
+@using EAP.ModelFirst.Core.Project.Entities;
+@using EAP.ModelFirst.Core.Project.Members;
+@using EAP.ModelFirst.Core.Project.Parameters;
+@using EAP.ModelFirst.Core.Project.Relationships;
+@functions{
+	//NameSpace
+	public static string getNamespaceBegin(TypeBase m){
+		if(m.IsNested)
+			return "";
+		var package = m.GetPackageName();
+		if(package.IsNullOrEmpty())
+			return "";
+		return "namespace "+package.Replace(package.Split('.')[0], package.Split('.')[0]+".WPF")+"\r\n{\r\n";
+	}	
+	public static string getNamespaceEnd(TypeBase m){
+		if(m.IsNested)
+			return "";
+		var package = m.GetPackageName();
+		if(package.IsNullOrEmpty())
+			return "";
+		return "}";
+	}
+	//BaseType
+	public static string getClassComment(TypeBase t){
+		return "	/// <summary>\r\n	/// "+t.Comments+"视图配置\r\n	/// </summary>\r\n";
+	}
+	public static string getClassAttribute(TypeBase m){
+		return "";
+	}	
+	public static string getAccess(AccessModifier t){
+		return "internal ";
+	}	
+	public static string getPartial(TypeBase m){
+		return "";
+	}	
+	public static string getClassModifier(TypeBase t){
+		return "";
+	}	
+	public static string getEntryType(TypeBase m){
+		return "class ";
+	}
+	public static string getTypeName(TypeBase m){
+		return m.Name+"ViewConfig";
+	}	
+	public static string getTypeBase(TypeBase t){
+		var result = "";
+		if (t is ClassType){
+			var type = t as ClassType;
+				result += "WPFViewConfig<"+t.Name+">";
+		}
+		return result.Length>0 ? " : " + result : "";
+	}
+	public static string getOperations(TypeBase t){
+		var operations="";
+		if(t is CompositeType){
+			var type = t as CompositeType;
+			foreach(var o in type.Operations){
+				var operation = "";
+				if(o is Property){
+					var p = o as Property;
+					operation+="				View.Property(p => p."+p.Name+").HasLabel(\""+p.Comments+"\").ShowIn(ShowInWhere.All);\r\n";
+				}
+				operations+=operation;
+			}
+		}
+		return operations.TrimEnd('\r','\n');
+	}
+	public static string getViewConfig(TypeBase t){
+		return "View.DomainName(\""+t.Comments+"\");//.HasDelegate("+t.Name+".NameProperty);";
+	}
+}@{
+	var output="\\"+Model.ProjectName+"\\ViewConfig\\"+Model.Type.GetPackageName("\\", false)+Model.Type.Name+"ViewConfig.cs";
+}
+using @Model.Type.GetPackageName();
+using Platform.MetaModel.View;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+@getNamespaceBegin(Model.Type)@getClassComment(Model.Type)@getClassAttribute(Model.Type)	@getAccess(Model.Type.Access)@getClassModifier(Model.Type)@getPartial(Model.Type)@getEntryType(Model.Type)@getTypeName(Model.Type)@getTypeBase(Model.Type)
+	{
+		protected override void ConfigView()
+        {
+            @getViewConfig(Model.Type);
+            View.UseDefaultCommands();
+
+            using (View.OrderProperties())
+            {
+@{
+			var newLine = "\r\n";
+			var operations = getOperations(Model.Type);
+			if(!string.IsNullOrWhiteSpace(operations)){
+				@operations
+				@newLine
+			}
+}
+			}
+        }
+	}
+@getNamespaceEnd(Model.Type)

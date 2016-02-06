@@ -1,4 +1,4 @@
-﻿namespace EAP.ModelFirst.Controls.Explorers
+﻿namespace EAP.ModelFirst.Controls.Documents
 {
     partial class CodeViewer
     {
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CodeViewer));
-            this.txtContent = new ComponentFactory.Krypton.Toolkit.KryptonRichTextBox();
+            this.txtContent = new ICSharpCode.TextEditor.TextEditorControl();
             this.SuspendLayout();
             // 
             // txtContent
@@ -57,7 +57,7 @@
 
         #endregion
 
-        private ComponentFactory.Krypton.Toolkit.KryptonRichTextBox txtContent;
+        private ICSharpCode.TextEditor.TextEditorControl txtContent;
 
     }
 }

@@ -171,6 +171,10 @@ namespace EAP.ModelFirst.Controls.Editors.DiagramEditor.ClassDiagram
 		{
 		}
 
+        protected internal virtual void ShowEditDialog()
+        {
+        }
+
 		protected internal virtual void HideEditor()
 		{
 		}

@@ -25,7 +25,7 @@ namespace EAP.ModelFirst.Controls.Explorers
 
         public static void Show(IDockForm dockForm)
         {
-            Instance.DockForm = dockForm;
+            LoadProjects(dockForm);
             Instance.Show(dockForm.DockPanel);
         }
 
@@ -45,12 +45,16 @@ namespace EAP.ModelFirst.Controls.Explorers
             UpdateTexts();
         }
 
-        protected override void OnLoad(System.EventArgs e)
+        bool isLoaded;
+
+        public static void LoadProjects(IDockForm dockForm)
         {
-            base.OnLoad(e);
-            view.LoadProjects(DockForm.Workspace.Projects);
-            DockForm.Workspace.ProjectAdded += workspace_ProjectAdded;
-            DockForm.Workspace.ProjectRemoved += workspace_ProjectRemoved;
+            Instance.DockForm = dockForm;
+            if (Instance.isLoaded) return;
+            Instance.view.LoadProjects(dockForm.Workspace.Projects);
+            dockForm.Workspace.ProjectAdded += Instance.workspace_ProjectAdded;
+            dockForm.Workspace.ProjectRemoved += Instance.workspace_ProjectRemoved;
+            Instance.isLoaded = true;
         }
 
         private void workspace_ProjectAdded(object sender, ProjectEventArgs e)

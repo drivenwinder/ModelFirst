@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using ComponentFactory.Krypton.Toolkit;
+using ICSharpCode.TextEditor.Document;
 
 namespace EAP.ModelFirst.Controls.Dialogs
 {

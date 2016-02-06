@@ -9,8 +9,9 @@ using System.Windows.Forms;
 using ComponentFactory.Krypton.Toolkit;
 using EAP.ModelFirst.Core;
 using System.IO;
+using ICSharpCode.TextEditor.Document;
 
-namespace EAP.ModelFirst.Controls.Explorers
+namespace EAP.ModelFirst.Controls.Documents
 {
     public partial class CodeViewer : EAP.ModelFirst.Controls.Documents.DocumentBase
     {
@@ -26,14 +27,6 @@ namespace EAP.ModelFirst.Controls.Explorers
                 viewer.FormClosed += (s, e) => { viewers.Remove(viewer); };
                 viewers.Add(viewer);
             }
-            dockFrom.DockPanel.ActiveDocumentChanged += (s, e) =>
-            {
-                if (dockFrom.DockPanel.ActiveDocument == viewer)
-                {
-                    if (viewer.File.LastWriteTime != System.IO.File.GetLastWriteTime(viewer.File.FullName))
-                        viewer.LoadContent();
-                }
-            };
             viewer.Show(dockFrom.DockPanel);
         }
 
@@ -42,10 +35,31 @@ namespace EAP.ModelFirst.Controls.Explorers
         protected CodeViewer(FileInfo file)
         {
             InitializeComponent();
+            txtContent.Document.HighlightingStrategy = HighlightingManager.Manager.FindHighlighter("C#");
             File = file;
             TabText = File.Name;
             UpdateTexts();
             LoadContent();
+        }
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            var f = DockPanel.FindForm();
+            if (f != null)
+                f.Activated += f_Activated;
+        }
+        protected override void OnClosed(EventArgs e)
+        {
+            var f = DockPanel.FindForm();
+            if (f != null)
+                f.Activated -= f_Activated;
+            base.OnClosed(e);
+        }
+
+        void f_Activated(object sender, EventArgs e)
+        {
+            if (File.LastWriteTime < System.IO.File.GetLastWriteTime(File.FullName))
+                LoadContent();
         }
 
         void LoadContent()

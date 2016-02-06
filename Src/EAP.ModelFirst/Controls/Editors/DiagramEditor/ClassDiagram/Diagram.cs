@@ -1231,6 +1231,10 @@ namespace EAP.ModelFirst.Controls.Editors.DiagramEditor.ClassDiagram
                 DeselectAll();
                 Redraw();
             }
+            else if (e.KeyCode == Keys.F4 && ActiveElement != null)
+            {
+                ActiveElement.ShowEditDialog();
+            }
             // Enter
             else if (e.KeyCode == Keys.Enter && ActiveElement != null)
             {

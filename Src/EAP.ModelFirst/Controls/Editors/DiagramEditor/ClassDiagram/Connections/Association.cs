@@ -108,15 +108,6 @@ namespace EAP.ModelFirst.Controls.Editors.DiagramEditor.ClassDiagram.Connections
 			ShowEditDialog();
 		}
 
-		public void ShowEditDialog()
-		{
-			using (AssociationDialog dialog = new AssociationDialog())
-			{
-				dialog.Association = AssociationRelationship;
-				dialog.ShowDialog();
-			}
-		}
-
 		private void association_Reversed(object sender, EventArgs e)
 		{
 			Reverse();
@@ -405,5 +396,13 @@ namespace EAP.ModelFirst.Controls.Editors.DiagramEditor.ClassDiagram.Connections
 
 			return area;
 		}
+        protected internal override void ShowEditDialog()
+        {
+            using (AssociationDialog dialog = new AssociationDialog())
+            {
+                dialog.Association = AssociationRelationship;
+                dialog.ShowDialog();
+            }
+        }
 	}
 }

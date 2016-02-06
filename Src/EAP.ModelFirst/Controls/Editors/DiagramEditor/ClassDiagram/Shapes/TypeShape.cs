@@ -742,5 +742,13 @@ namespace EAP.ModelFirst.Controls.Editors.DiagramEditor.ClassDiagram.Shapes
             base.OnDeactivated(e);
             HideWindow(RelationShipEditor);
         }
+
+        protected internal override void ShowEditDialog()
+        {
+            using (var dialog = new EAP.ModelFirst.Controls.Dialogs.TypeBaseDialog())
+            {
+                dialog.ShowDialog(TypeBase);
+            }
+        }
     }
 }

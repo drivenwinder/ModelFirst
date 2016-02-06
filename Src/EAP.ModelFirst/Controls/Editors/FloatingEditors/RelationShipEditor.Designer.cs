@@ -53,7 +53,7 @@
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(177, 25);
+            this.toolStrip.Size = new System.Drawing.Size(146, 25);
             this.toolStrip.TabIndex = 4;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -123,7 +123,8 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.Controls.Add(this.toolStrip);
             this.Name = "RelationShipEditor";
-            this.Size = new System.Drawing.Size(177, 25);
+            this.Size = new System.Drawing.Size(146, 25);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RelationShipEditor_KeyDown);
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.ResumeLayout(false);

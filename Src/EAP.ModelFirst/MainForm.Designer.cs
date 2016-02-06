@@ -142,6 +142,11 @@
             this.btnTemplateExplorer = new System.Windows.Forms.ToolStripButton();
             this.btnDiagramNavigator = new System.Windows.Forms.ToolStripButton();
             this.btnToolBox = new System.Windows.Forms.ToolStripButton();
+            this.toolStripTextEditor = new System.Windows.Forms.ToolStrip();
+            this.btnOutdent = new System.Windows.Forms.ToolStripButton();
+            this.btnIndent = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnWordWrap = new System.Windows.Forms.ToolStripButton();
             this.toolStripVisualizer = new System.Windows.Forms.ToolStrip();
             this.zoomToolStripLabel = new System.Windows.Forms.ToolStripLabel();
             this.zoomOutToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -160,11 +165,6 @@
             this.btnSameWidth = new System.Windows.Forms.ToolStripButton();
             this.btnSameHeight = new System.Windows.Forms.ToolStripButton();
             this.btnSameSize = new System.Windows.Forms.ToolStripButton();
-            this.toolStripTextEditor = new System.Windows.Forms.ToolStrip();
-            this.btnOutdent = new System.Windows.Forms.ToolStripButton();
-            this.btnIndent = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnWordWrap = new System.Windows.Forms.ToolStripButton();
             this.kryptonContextMenuItem1 = new ComponentFactory.Krypton.Toolkit.KryptonContextMenuItem();
             this.kryptonContextMenuItem2 = new ComponentFactory.Krypton.Toolkit.KryptonContextMenuItem();
             this.statusStrip.SuspendLayout();
@@ -175,9 +175,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dockPanel)).BeginInit();
             this.contextMenuStripToolStrip.SuspendLayout();
             this.toolStripStandard.SuspendLayout();
+            this.toolStripTextEditor.SuspendLayout();
             this.toolStripVisualizer.SuspendLayout();
             this.toolStripLayout.SuspendLayout();
-            this.toolStripTextEditor.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip
@@ -835,7 +835,7 @@
             // toolStripContainer.ContentPanel
             // 
             this.toolStripContainer.ContentPanel.Controls.Add(this.dockPanel);
-            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(945, 338);
+            this.toolStripContainer.ContentPanel.Size = new System.Drawing.Size(945, 363);
             this.toolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer.LeftToolStripPanelVisible = false;
             this.toolStripContainer.Location = new System.Drawing.Point(0, 0);
@@ -851,9 +851,9 @@
             this.toolStripContainer.TopToolStripPanel.ContextMenuStrip = this.contextMenuStripToolStrip;
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this.menuStrip);
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripStandard);
-            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripVisualizer);
-            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripLayout);
             this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripTextEditor);
+            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripLayout);
+            this.toolStripContainer.TopToolStripPanel.Controls.Add(this.toolStripVisualizer);
             // 
             // dockPanel
             // 
@@ -862,12 +862,12 @@
             this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dockPanel.DockBottomPortion = 200D;
             this.dockPanel.DockLeftPortion = 150D;
-            this.dockPanel.DockRightPortion = 200D;
+            this.dockPanel.DockRightPortion = 280D;
             this.dockPanel.DockTopPortion = 200D;
             this.dockPanel.DocumentStyle = EAP.Win.UI.DocumentStyle.DockingWindow;
             this.dockPanel.Location = new System.Drawing.Point(0, 0);
             this.dockPanel.Name = "dockPanel";
-            this.dockPanel.Size = new System.Drawing.Size(945, 338);
+            this.dockPanel.Size = new System.Drawing.Size(945, 363);
             this.dockPanel.TabIndex = 0;
             this.dockPanel.ActiveDocumentChanged += new System.EventHandler(this.dockPanel_ActiveDocumentChanged);
             this.dockPanel.ActiveContentChanged += new System.EventHandler(this.dockPanel_ActiveContentChanged);
@@ -1210,6 +1210,60 @@
             this.btnToolBox.Text = "Tool Box";
             this.btnToolBox.Click += new System.EventHandler(this.toolBoxToolStripMenuItem_Click);
             // 
+            // toolStripTextEditor
+            // 
+            this.toolStripTextEditor.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStripTextEditor.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.toolStripTextEditor.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnOutdent,
+            this.btnIndent,
+            this.toolStripSeparator14,
+            this.btnWordWrap});
+            this.toolStripTextEditor.Location = new System.Drawing.Point(234, 49);
+            this.toolStripTextEditor.Name = "toolStripTextEditor";
+            this.toolStripTextEditor.Size = new System.Drawing.Size(87, 25);
+            this.toolStripTextEditor.TabIndex = 5;
+            this.toolStripTextEditor.Text = "Text Editor";
+            // 
+            // btnOutdent
+            // 
+            this.btnOutdent.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnOutdent.Enabled = false;
+            this.btnOutdent.Image = global::EAP.ModelFirst.Properties.Resources.OutdentHS;
+            this.btnOutdent.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnOutdent.Name = "btnOutdent";
+            this.btnOutdent.Size = new System.Drawing.Size(23, 22);
+            this.btnOutdent.Text = "Outdent";
+            this.btnOutdent.Click += new System.EventHandler(this.btnOutdent_Click);
+            // 
+            // btnIndent
+            // 
+            this.btnIndent.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnIndent.Enabled = false;
+            this.btnIndent.Image = global::EAP.ModelFirst.Properties.Resources.IndentHS;
+            this.btnIndent.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnIndent.Name = "btnIndent";
+            this.btnIndent.Size = new System.Drawing.Size(23, 22);
+            this.btnIndent.Text = "Indent";
+            this.btnIndent.Click += new System.EventHandler(this.btnIndent_Click);
+            // 
+            // toolStripSeparator14
+            // 
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            this.toolStripSeparator14.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnWordWrap
+            // 
+            this.btnWordWrap.CheckOnClick = true;
+            this.btnWordWrap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnWordWrap.Enabled = false;
+            this.btnWordWrap.Image = global::EAP.ModelFirst.Properties.Resources.WordWrap;
+            this.btnWordWrap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnWordWrap.Name = "btnWordWrap";
+            this.btnWordWrap.Size = new System.Drawing.Size(23, 22);
+            this.btnWordWrap.Text = "Word Wrap";
+            this.btnWordWrap.Click += new System.EventHandler(this.btnWordWrap_Click);
+            // 
             // toolStripVisualizer
             // 
             this.toolStripVisualizer.Dock = System.Windows.Forms.DockStyle.None;
@@ -1220,7 +1274,7 @@
             this.zoomingToolStrip,
             this.zoomInToolStripButton,
             this.autoZoomToolStripButton});
-            this.toolStripVisualizer.Location = new System.Drawing.Point(3, 49);
+            this.toolStripVisualizer.Location = new System.Drawing.Point(3, 74);
             this.toolStripVisualizer.Name = "toolStripVisualizer";
             this.toolStripVisualizer.Size = new System.Drawing.Size(216, 25);
             this.toolStripVisualizer.TabIndex = 3;
@@ -1291,7 +1345,7 @@
             this.btnSameWidth,
             this.btnSameHeight,
             this.btnSameSize});
-            this.toolStripLayout.Location = new System.Drawing.Point(3, 74);
+            this.toolStripLayout.Location = new System.Drawing.Point(3, 49);
             this.toolStripLayout.Name = "toolStripLayout";
             this.toolStripLayout.Size = new System.Drawing.Size(231, 25);
             this.toolStripLayout.TabIndex = 4;
@@ -1406,60 +1460,6 @@
             this.btnSameSize.Text = "Same Size";
             this.btnSameSize.Click += new System.EventHandler(this.btnSameSize_Click);
             // 
-            // toolStripTextEditor
-            // 
-            this.toolStripTextEditor.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStripTextEditor.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.toolStripTextEditor.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnOutdent,
-            this.btnIndent,
-            this.toolStripSeparator14,
-            this.btnWordWrap});
-            this.toolStripTextEditor.Location = new System.Drawing.Point(63, 99);
-            this.toolStripTextEditor.Name = "toolStripTextEditor";
-            this.toolStripTextEditor.Size = new System.Drawing.Size(87, 25);
-            this.toolStripTextEditor.TabIndex = 5;
-            this.toolStripTextEditor.Text = "Text Editor";
-            // 
-            // btnOutdent
-            // 
-            this.btnOutdent.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnOutdent.Enabled = false;
-            this.btnOutdent.Image = global::EAP.ModelFirst.Properties.Resources.OutdentHS;
-            this.btnOutdent.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnOutdent.Name = "btnOutdent";
-            this.btnOutdent.Size = new System.Drawing.Size(23, 22);
-            this.btnOutdent.Text = "Outdent";
-            this.btnOutdent.Click += new System.EventHandler(this.btnOutdent_Click);
-            // 
-            // btnIndent
-            // 
-            this.btnIndent.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnIndent.Enabled = false;
-            this.btnIndent.Image = global::EAP.ModelFirst.Properties.Resources.IndentHS;
-            this.btnIndent.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnIndent.Name = "btnIndent";
-            this.btnIndent.Size = new System.Drawing.Size(23, 22);
-            this.btnIndent.Text = "Indent";
-            this.btnIndent.Click += new System.EventHandler(this.btnIndent_Click);
-            // 
-            // toolStripSeparator14
-            // 
-            this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(6, 25);
-            // 
-            // btnWordWrap
-            // 
-            this.btnWordWrap.CheckOnClick = true;
-            this.btnWordWrap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnWordWrap.Enabled = false;
-            this.btnWordWrap.Image = global::EAP.ModelFirst.Properties.Resources.WordWrap;
-            this.btnWordWrap.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnWordWrap.Name = "btnWordWrap";
-            this.btnWordWrap.Size = new System.Drawing.Size(23, 22);
-            this.btnWordWrap.Text = "Word Wrap";
-            this.btnWordWrap.Click += new System.EventHandler(this.btnWordWrap_Click);
-            // 
             // kryptonContextMenuItem1
             // 
             this.kryptonContextMenuItem1.Text = "Menu Item";
@@ -1494,12 +1494,12 @@
             this.contextMenuStripToolStrip.ResumeLayout(false);
             this.toolStripStandard.ResumeLayout(false);
             this.toolStripStandard.PerformLayout();
+            this.toolStripTextEditor.ResumeLayout(false);
+            this.toolStripTextEditor.PerformLayout();
             this.toolStripVisualizer.ResumeLayout(false);
             this.toolStripVisualizer.PerformLayout();
             this.toolStripLayout.ResumeLayout(false);
             this.toolStripLayout.PerformLayout();
-            this.toolStripTextEditor.ResumeLayout(false);
-            this.toolStripTextEditor.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

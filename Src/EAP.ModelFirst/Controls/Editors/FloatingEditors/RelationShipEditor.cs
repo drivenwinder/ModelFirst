@@ -29,10 +29,10 @@ namespace EAP.ModelFirst.Controls.Editors.FloatingEditors
                 Diagram diagram = shape.Diagram;
                 if (diagram != null)
                 {
-                    Point absolute = new Point(shape.Left, shape.Top - 40);
+                    Point absolute = new Point(shape.Left, shape.Top);
                     Size relative = new Size(
                         (int)(absolute.X * diagram.Zoom) - diagram.Offset.X,
-                        (int)(absolute.Y * diagram.Zoom) - diagram.Offset.Y);
+                        (int)(absolute.Y * diagram.Zoom) - diagram.Offset.Y - 40);
                     Window.Location = Window.ParentLocation + relative;
                 }
             }
@@ -87,6 +87,11 @@ namespace EAP.ModelFirst.Controls.Editors.FloatingEditors
         private void btnDependency_Click(object sender, EventArgs e)
         {
             shape.Diagram.CreateConnection(shape, Core.Project.Relationships.RelationshipType.Dependency);
+        }
+
+        private void RelationShipEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            shape.Diagram.KeyDown(e);
         }
     }
 }

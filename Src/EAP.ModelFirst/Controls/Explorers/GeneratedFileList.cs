@@ -6,6 +6,7 @@ using EAP.ModelFirst.Controls.Dialogs;
 using EAP.ModelFirst.Core;
 using EAP.ModelFirst.Properties;
 using EAP.ModelFirst.Utils;
+using EAP.ModelFirst.Controls.Documents;
 
 namespace EAP.ModelFirst.Controls.Explorers
 {

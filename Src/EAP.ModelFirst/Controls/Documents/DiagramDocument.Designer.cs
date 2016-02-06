@@ -42,16 +42,16 @@
             this.canvas.Location = new System.Drawing.Point(0, 0);
             this.canvas.Name = "canvas";
             this.canvas.Offset = new System.Drawing.Point(0, 0);
-            this.canvas.Size = new System.Drawing.Size(463, 379);
+            this.canvas.Size = new System.Drawing.Size(463, 350);
             this.canvas.TabIndex = 0;
             this.canvas.Zoom = 1F;
             // 
             // DiagramDocument
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(463, 379);
+            this.ClientSize = new System.Drawing.Size(463, 350);
             this.Controls.Add(this.canvas);
             this.DockAreas = ((EAP.Win.UI.DockAreas)((EAP.Win.UI.DockAreas.Float | EAP.Win.UI.DockAreas.Document)));
             this.Name = "DiagramDocument";

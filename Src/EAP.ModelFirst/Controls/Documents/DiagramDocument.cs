@@ -139,14 +139,6 @@ namespace EAP.ModelFirst.Controls.Documents
             DockForm.Workspace.SaveProjectAs(canvas.Diagram.ProjectInfo);
         }
 
-        private void canvas_KeyUp(object sender, KeyEventArgs e)
-        {
-            //KeyDown Event Does Not Occur When You Press the DELETE and the ARROW Keys
-            //http://support.microsoft.com/kb/828964/en-us
-            //if (e.KeyCode == Keys.Delete)
-            //    canvas.Diagram.KeyDown(e);
-        }
-
         public object PropertyObject
         {
             get { return this; }

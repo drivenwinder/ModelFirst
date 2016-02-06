@@ -314,6 +314,7 @@ namespace EAP.ModelFirst
                     Workspace.Load();
                 }
                 LoadDocking();
+                ProjectExplorer.LoadProjects(this);
             }
         }
 
